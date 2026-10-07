@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para quem ensina</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Lora:ital,wght@0,400;1,400&display=swap">
+<style>
+:root{
+  --board:#1d3834; --board-deep:#142925; --chalk:#f3f0e4; --dim:#f3f0e44d; --yellow:#f2cf66; --pink:#f1a0ae;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;color:var(--chalk);background:var(--board);
+  background-image:radial-gradient(ellipse at 50% 20%,var(--board) 0%,var(--board-deep) 100%);
+  font-family:'Lora',Georgia,serif;display:flex;
+}
+main{margin:auto;width:100%;max-width:640px;padding:48px 28px;text-align:left}
+.tally{display:block;width:150px;height:auto;margin:0 0 28px}
+.tally line{stroke:var(--dim);stroke-width:5;stroke-linecap:round}
+.tally line.on{stroke:var(--chalk)}
+.tally line.now{stroke:var(--yellow)}
+.date{font-family:'Caveat',cursive;font-size:1.35rem;color:var(--pink);margin:0 0 4px}
+h1{font-family:'Caveat','Comic Sans MS',cursive;font-weight:700;font-size:clamp(2.6rem,9vw,4.2rem);line-height:1.05;margin:0 0 24px;color:var(--yellow)}
+.msg p{font-size:1.15rem;line-height:1.75;margin:0 0 1.1em;max-width:60ch}
+.sign{font-family:'Caveat',cursive;font-size:1.8rem;margin-top:28px;color:var(--chalk)}
+.fade{animation:in 1.2s ease both}
+@keyframes in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}}
+svg.chalk *{fill:none;stroke:var(--chalk);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.owlrow{display:flex;justify-content:flex-end;margin-top:36px}
+.owl{width:130px;height:auto}
+.owl .fill{fill:var(--board-deep)}
+.owl .eye{stroke:var(--yellow)}
+.owl .pupil,.owl .beak{fill:var(--yellow);stroke:var(--yellow)}
+.owl .book1{stroke:var(--pink)} .owl .book2{stroke:var(--yellow)}
+.owl .pupil{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.deco{position:absolute;pointer-events:none;opacity:.75}
+.apple{top:calc(20px + env(safe-area-inset-top,0px));right:22px;width:58px}
+.apple .leaf{stroke:var(--pink)}
+.grade{top:34px;right:86px;font-family:'Caveat',cursive;font-size:2rem;color:var(--pink);transform:rotate(-12deg);font-weight:700}
+.pencil{bottom:24px;left:16px;width:150px;transform:rotate(-8deg)}
+.pencil .tip{stroke:var(--yellow)}
+html{-webkit-text-size-adjust:100%}
+main{padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));overflow-wrap:break-word}
+@media (max-width:640px){
+  main{padding:72px 22px 36px}
+  .pencil{display:none}
+  .apple{width:44px;top:calc(14px + env(safe-area-inset-top,0px));right:16px}
+  .grade{font-size:1.6rem;top:24px;right:66px}
+  .tally{width:112px;margin-bottom:22px}
+  .date{font-size:1.2rem}
+  h1{margin-bottom:18px}
+  .msg p{font-size:1.05rem;line-height:1.7}
+  .sign{font-size:1.55rem;margin-top:22px}
+  .owlrow{justify-content:center;margin-top:30px}
+  .owl{width:110px}
+  .note{margin-top:28px}
+}
+@media (max-width:360px){
+  main{padding:68px 18px 32px}
+  .msg p{font-size:1rem}
+  .grade{display:none}
+}
+@media (max-height:480px) and (orientation:landscape){
+  main{padding-top:56px}
+  .deco{display:none}
+}
+@media (prefers-reduced-motion:reduce){.owl .pupil{animation:none}}
+html,body{position:relative}
+.note{font-size:.95rem;color:var(--dim);margin-top:40px;font-style:italic}
+</style>
+</head>
+<body>
+<svg class="deco apple chalk" viewBox="0 0 60 64" aria-hidden="true"><path d="M30 20c-8-6-22-2-22 14 0 14 10 26 18 26 3 0 3-2 4-2s1 2 4 2c8 0 18-12 18-26 0-16-14-20-22-14z"/><path d="M30 20c0-6 2-10 5-13"/><path class="leaf" d="M35 10c6-5 12-3 14-1-3 5-9 6-14 1z"/></svg>
+<div class="deco grade" aria-hidden="true">A+</div>
+<svg class="deco pencil chalk" viewBox="0 0 160 24" aria-hidden="true"><path d="M4 4h112v16H4z"/><path d="M116 4l36 8-36 8"/><path class="tip" d="M144 9.5l8 2.5-8 2.5"/><path d="M20 4v16M28 4v16"/></svg>
+<main id="app" class="fade"></main>
+<script>
+// ---- CONFIGURAÇÃO (edite aqui) ----
+var START = [2026, 10, 11];      // [ano, mês, dia] do primeiro dia
+var FROM  = "Com carinho e gratidão";
+// -----------------------------------
+var DAYS = [
+ {t:"Obrigado por ficar",
+  m:["Existem profissões que a gente escolhe pelo salário, e existe a sua: aquela que a gente escolhe por acreditar que o amanhã pode ser melhor do que o hoje.",
+     "Todo dia você abre a porta de uma sala e, sem alarde, abre também a porta de um futuro para alguém. Muita gente nunca vai te agradecer por isso. Então começamos agora.",
+     "Obrigado por ficar, mesmo quando teria sido mais fácil ir embora."]},
+ {t:"O que fica",
+  m:["Ninguém lembra de tudo o que aprendeu na escola. Mas todo mundo lembra de quem acreditou nele.",
+     "Lembramos da voz que explicou pela terceira vez sem suspirar. Do bilhete na margem da prova. Do “você consegue” dito no momento exato em que a gente achava que não.",
+     "É isso que você deixa: coisas que não cabem em nota nenhuma, e que continuam trabalhando em silêncio por décadas."]},
+ {t:"Nos dias pesados",
+  m:["Sabemos que nem todo dia é bonito. Tem cansaço, tem correção que não acaba, tem sala cheia e reconhecimento escasso. Tem dia em que você leva a escola para casa na cabeça e no coração.",
+     "Hoje queremos dizer apenas isto: o seu esforço é visto. Mesmo quando ninguém comenta, mesmo quando parece que nada muda.",
+     "Descanse sem culpa. Você carrega muita coisa, e merece também ser cuidado."]},
+ {t:"Você está em tantas histórias",
+  m:["Pare um instante e pense: quantas pessoas passaram pela sua aula? Centenas? Milhares?",
+     "Cada uma delas leva um pedacinho seu. O médico que aprendeu a ter paciência com você. A engenheira que perdeu o medo da matemática. O pai que lê para o filho porque um dia alguém lhe mostrou que ler era possível.",
+     "Você está em histórias que nunca vai conhecer. E elas são mais bonitas por sua causa."]},
+ {t:"Feliz Dia dos Professores",
+  m:["Chegou o dia. E a gente quer que ele seja, de verdade, seu.",
+     "Obrigado por ensinar o que está nos livros, e principalmente o que não está: a curiosidade, a coragem de errar, o respeito pelo outro, a vontade de continuar aprendendo.",
+     "Que hoje alguém te diga o que muita gente deveria ter dito há tempos: você faz diferença. Sempre fez.",
+     "Feliz Dia dos Professores."]}
+];
+var MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+function el(h){return h}
+function tally(n){ // n = dia atual (1..5)
+  var x=[14,44,74,104], s='<svg class="tally" viewBox="0 0 150 70" role="img" aria-label="Dia '+n+' de 5">';
+  for(var i=0;i<4;i++) s+='<line x1="'+x[i]+'" y1="6" x2="'+x[i]+'" y2="64" class="'+(i+1<n?'on':i+1===n?'now':'')+'"/>';
+  s+='<line x1="2" y1="52" x2="128" y2="16" class="'+(n===5?'now':'')+'"/></svg>';
+  return s;
+}
+function render(day, date){
+  var d=DAYS[day-1], out=tally(day);
+  if(date) out+='<p class="date">'+date+'</p>';
+  out+='<h1>'+d.t+'</h1><div class="msg">'+d.m.map(function(p){return '<p>'+p+'</p>'}).join('')+'</div><div class="sign">'+FROM+'</div>';
+  return out;
+}
+function today(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
+var app=document.getElementById('app');
+var start=new Date(START[0],START[1]-1,START[2]);
+var preview=parseInt(new URLSearchParams(location.search).get('dia'),10);
+var diff=Math.round((today()-start)/864e5), html;
+if(preview>=1&&preview<=5){ html=render(preview,'pré-visualização'); }
+else if(diff<0){
+  document.title="Em breve";
+  html=tally(0)+'<h1>Daqui a pouco…</h1><div class="msg"><p>Estamos preparando uma homenagem para você. Volte no dia '+START[2]+' de '+MESES[START[1]-1]+' e todos os dias depois dele: cada visita traz uma mensagem nova.</p></div><div class="sign">'+FROM+'</div>';
+} else {
+  var day=Math.min(diff+1,5), dt=new Date(start.getTime()+(day-1)*864e5);
+  html=render(day, dt.getDate()+' de '+MESES[dt.getMonth()]);
+  if(diff<4) html+='<p class="note">Volte amanhã. Tem mais uma mensagem esperando por você.</p>';
+}
+var OWL='<div class="owlrow"><svg class="owl chalk" viewBox="0 0 140 190" role="img" aria-label="Coruja professora com capelo, sentada sobre livros">'
++'<rect class="book1" x="10" y="168" width="120" height="16" rx="2"/><rect class="book2" x="22" y="152" width="98" height="16" rx="2"/><rect x="34" y="138" width="80" height="14" rx="2"/>'
++'<ellipse class="fill" cx="70" cy="92" rx="34" ry="46"/><path d="M36 86q-14 24 4 46M104 86q14 24-4 46"/>'
++'<path d="M54 112q5 6 10 0M66 112q5 6 10 0M60 122q5 6 10 0M72 122q5 6 10 0"/>'
++'<circle class="eye" cx="54" cy="78" r="13"/><circle class="eye" cx="86" cy="78" r="13"/><circle class="pupil" cx="54" cy="78" r="5"/><circle class="pupil" cx="86" cy="78" r="5"/>'
++'<path class="beak" d="M65 90h10l-5 11z"/><path class="fill" d="M70 22l44 16-44 16-44-16z"/><path d="M50 46v10q20 10 40 0V46"/><path d="M114 38v22"/><circle cx="114" cy="63" r="3"/></svg></div>';
+app.innerHTML=html+OWL;
+</script>
+</body>
+</html>
